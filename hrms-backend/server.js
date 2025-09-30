@@ -123,3 +123,6 @@ app.get("/api/attendance", verifyToken, async (req, res) => {
 // -------------------- Server Start --------------------
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
+
+
+// bcrypt.hash("Admin@123", 10).then(hash => console.log(hash));

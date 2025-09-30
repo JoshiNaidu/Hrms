@@ -16,6 +16,7 @@ import ForgotPassword from './ForgotPassword';
 import AppTheme from '../shared-theme/AppTheme';
 import ColorModeSelect from '../shared-theme/ColorModeSelect';
 import Hrms from '../assets/Hrms.png';
+import { loginUser } from '../services/HrmsService';
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -74,17 +75,17 @@ export default function SignIn(props) {
     setOpen(false);
   };
 
-  const handleSubmit = (event) => {
-    if (emailError || passwordError) {
-      event.preventDefault();
-      return;
-    }
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
-  };
+  // const handleSubmit = (event) => {
+  //   if (emailError || passwordError) {
+  //     event.preventDefault();
+  //     return;
+  //   }
+  //   const data = new FormData(event.currentTarget);
+  //   console.log({
+  //     email: data.get('email'),
+  //     password: data.get('password'),
+  //   });
+  // };
 
   const validateInputs = () => {
     const email = document.getElementById('email');
@@ -112,6 +113,33 @@ export default function SignIn(props) {
 
     return isValid;
   };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault(); // prevent default form submission
+
+    if (!validateInputs()) return; // only proceed if inputs are valid
+
+    const data = new FormData(event.currentTarget);
+    const email = data.get('email');
+    const password = data.get('password');
+
+    try {
+      const response = await loginUser(email, password); // call backend
+      console.log('Login successful:', response);
+
+      // Optionally save token to localStorage
+      if (response.token) {
+        localStorage.setItem('authToken', response.token);
+      }
+
+      alert('Login successful!');
+
+    } catch (err) {
+      console.error('Login failed:', err.response?.data || err.message);
+      alert('Login failed: ' + (err.response?.data?.message || err.message));
+    }
+  };
+
 
   return (
     <AppTheme {...props}>
